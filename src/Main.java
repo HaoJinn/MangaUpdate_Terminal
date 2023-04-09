@@ -15,7 +15,7 @@ public class Main{
 
     public void setOldData(){
         try {
-            File file = new File("C:\\Users\\lisha\\IdeaProjects\\MangaCheck\\current.txt");
+            File file = new File("C:\\Users\\nymph\\IdeaProjects\\MangaCheck\\current.txt");
             BufferedReader br = new BufferedReader(new FileReader(file));
             String temp;
             br.readLine();
@@ -35,7 +35,7 @@ public class Main{
     public void obtainData(String link){
         try{
             //DateTimeFormatter myDate = DateTimeFormatter.ofPatter("MMM-dd-yyyy");
-
+            //int temp = newProgress.size();
             URL url = new URL(link);
             InputStream is = (InputStream) url.getContent();
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -45,14 +45,24 @@ public class Main{
             String updateLine2 = "chapter-name";
             while((line = br.readLine()) != null){
                 line = line.trim();
-                if(line.length() > 50 && (line.substring(0,14).equals(updateLine) || line.substring(25,37).equals(updateLine2))){
+                if(line.length() > 150 && (line.substring(0,14).equals(updateLine) || line.substring(25,37).equals(updateLine2))){
 
                     newProgress.add(line);
                     break;
                 }
 
             }
+            /*
+            if(temp == newProgress.size()){
+                System.out.println("FUUUUUUCK");
+            }
+            else{
+                System.out.println("1");
+            }
+            */
+
             br.close();
+
             //bw.close();
 
         }
@@ -63,7 +73,7 @@ public class Main{
 
     public void setNames(){
         try {
-            File file = new File("C:\\Users\\lisha\\IdeaProjects\\MangaCheck\\current.txt");
+            File file = new File("C:\\Users\\nymph\\IdeaProjects\\MangaCheck\\current.txt");
             BufferedReader br = new BufferedReader(new FileReader(file));
             String temp;
             while((temp = br.readLine()) != null){
@@ -80,7 +90,7 @@ public class Main{
 
     public void setLinks(){
         try {
-            File file = new File("C:\\Users\\lisha\\IdeaProjects\\MangaCheck\\current.txt");
+            File file = new File("C:\\Users\\nymph\\IdeaProjects\\MangaCheck\\current.txt");
             BufferedReader br = new BufferedReader(new FileReader(file));
             String temp;
             br.readLine();
@@ -134,7 +144,7 @@ public class Main{
             String updateLine2 = "chapter-name";
             while((line = br.readLine()) != null){
                 line = line.trim();
-                if(line.length() > 50 && (line.substring(0,14).equals(updateLine) || line.substring(25,37).equals(updateLine2))){
+                if(line.length() > 150 && (line.substring(0,14).equals(updateLine) || line.substring(25,37).equals(updateLine2))){
                     if(line.equals(storedProgress.get(i).toString())){
                         break;
                     }
@@ -160,25 +170,39 @@ public class Main{
     }
     public void updateFile(){
         try{
-            File file = new File("C:\\Users\\lisha\\IdeaProjects\\MangaCheck\\current.txt");
+            File file = new File("C:\\Users\\nymph\\IdeaProjects\\MangaCheck\\current.txt");
             BufferedReader br = new BufferedReader(new FileReader(file));
             int i = 0;
+            int cnt = 0;
             String line;
             ArrayList<String> temp = new ArrayList<String>();
             while((line = br.readLine()) != null){
-                if(line.substring(0,14).equals("<span><a href=") || line.substring(25,37).equals("chapter-name")){
+                line.trim();
+                if(cnt == 2){
+                    if(i == newProgress.size()){
+                        break;
+                    }
                     line = newProgress.get(i).toString();
                     i++;
+                    cnt -= 3;
                 }
                 temp.add(line);
+                cnt++;
             }
+            /*
+            br.close();
+            for(int j = 0; j < temp.size(); j++){
+                System.out.println(temp.get(j));
+            }
+            */
             BufferedWriter bw = new BufferedWriter(new FileWriter(file));
             for(int j = 0; j < temp.size(); j++){
                 bw.write(temp.get(j).toString());
                 bw.newLine();
             }
-            br.close();
+
             bw.close();
+
         }
         catch(Exception e){
             System.out.println(e);
@@ -191,6 +215,8 @@ public class Main{
         mangas.setNames();
 
         for (int i = 0; i < mangas.getName().size(); i++) {
+            //System.out.print(mangas.getName());
+            //System.out.println(i);
             mangas.obtainData(mangas.getLinks().get(i).toString());
         }
         /*
@@ -207,6 +233,7 @@ public class Main{
             System.out.println(mangas.getNewData().get(i).toString());
         }
         */
+
         try{
             BufferedWriter bw = new BufferedWriter(new FileWriter("Updates.txt"));
             Scanner read = new Scanner(System.in);
@@ -215,7 +242,6 @@ public class Main{
             for(int i = 0; i < mangas.getName().size(); i++){
                 if(mangas.compareData(i)){
                     updates = true;
-
                 }
                 int temp = mangas.checkChapters(i);
                 mangas.incNum(temp);
